@@ -1,0 +1,47 @@
+### GET do mockDb trazendo os users
+GET http://localhost:3000/users 
+
+### GET do mockDb trazendo os roles
+GET http://localhost:3000/roles
+
+### GET do mockDb trazendo os posts
+GET http://localhost:3000/posts
+
+### POST no mockDb cadastrando um novo user
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "id": 1,
+    "roleId": 1,
+    "name": "Felipe Farias",
+    "username": "efefarias",
+    "password": "1234567890",
+    "email": "Sincere@april.biz",
+    "address": {
+      "street": "Kulas Light",
+      "suite": "Apt. 556",
+      "city": "Gwenborough",
+      "zipcode": "92998-3874",
+      "geo": {
+        "lat": "-37.3159",
+        "lng": "81.1496"
+      }
+    },
+    "phone": "55 (81) 999299395",
+    "website": "hildegard.org",
+    "company": {
+      "name": "Romaguera-Crona",
+      "catchPhrase": "Multi-layered client-server neural-net",
+      "bs": "harness real-time e-markets"
+    }
+  }
+
+### POST que validará o username/password na dashboard
+POST http://localhost:3000/users/login
+Content-Type: application/json
+
+{
+    "username": "Bret",
+    "password": "123"
+}
