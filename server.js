@@ -111,8 +111,4 @@ app.get('/photos', async (req, res) => {
   res.json(dbmock.photos);
 })
 
-
-
-
-
-app.listen(3000)
+app.listen(3001)
