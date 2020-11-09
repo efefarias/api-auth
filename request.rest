@@ -7,6 +7,9 @@ GET http://localhost:3000/roles
 ### GET do mockDb trazendo os posts
 GET http://localhost:3000/posts
 
+### GET do mockDb trazendo um post específico
+GET http://localhost:3000/posts/10
+
 ### POST no mockDb cadastrando um novo user
 POST http://localhost:3000/users
 Content-Type: application/json
