@@ -2,7 +2,7 @@
 GET http://localhost:3001/users?page=1&perPage=15
 
 ### GET do mockDb trazendo os posts
-GET http://localhost:3001/posts?page=1&perPage=15
+GET http://localhost:3001/mostCommentedPosts
 
 ### POST que validará o username/password na dashboard
 POST http://localhost:3001/users/login

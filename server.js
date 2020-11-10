@@ -43,7 +43,7 @@ app.get('/users', (req, res) => {
   
   const total = dbmock.users.length
   res.set("X-Total-Count", total)
-  res.json(resultUsers)
+  res.json(resultUsers.slice(startIndex, endIndex))
 })
 
 app.get('/posts', (req, res) => {
@@ -72,24 +72,44 @@ app.get('/posts', (req, res) => {
 
   const total = resultPosts.length
   res.set("X-Total-Count", total)
-  res.json(resultPosts)
+  res.json(resultPosts.slice(startIndex, endIndex))
 })
 
 //HTTP METHODS OF COMMENTS
 app.get('/comments', (req, res) => {
+  let resultPosts = []
+  let resultComments = []
   const page = req.query.page
   const limit = req.query.perPage
+  const roleId = req.query.roleId
+  const userId = req.query.Id
   const filter = req.query.filter
   const order = req.query.order
 
   const startIndex = (page - 1) * limit
   const endIndex = page * limit
 
-  const resultComments = dbmock.comments.slice(startIndex, endIndex)
+  if(roleId === roleAdmin) {
+    const total = dbmock.comments.length
+    res.set("X-Total-Count", total)
+    res.json(dbmock.comments.slice(startIndex, endIndex))
+  } else {
+    dbmock.posts.forEach(post => {
+      if(post.userId.toString() === req.query.Id){
+        resultPosts.push(post);
+      }
+    });
+    resultPosts.forEach(post => {
+      dbmock.comments.forEach(comment => {
+        if(post.id === comment.postId)
+          resultComments.push(comment);
+      })
+    });
+  }
   
-  const total = dbmock.comments.length
+  const total = resultComments.length
   res.set("X-Total-Count", total)
-  res.json(resultComments)
+  res.json(resultComments.slice(startIndex, endIndex))
 })
 
 //HTTP METHODS OF ALBUMS
@@ -119,24 +139,44 @@ app.get('/albums', (req, res) => {
   
   const total = resultAlbums.length
   res.set("X-Total-Count", total)
-  res.json(resultAlbums)
+  res.json(resultAlbums.slice(startIndex, endIndex))
 })
 
 //HTTP METHODS OF PHOTOS
 app.get('/photos', (req, res) => {
+  let resultAlbums = []
+  let resultPhotos = []
   const page = req.query.page
   const limit = req.query.perPage
+  const roleId = req.query.roleId
+  const userId = req.query.Id
   const filter = req.query.filter
   const order = req.query.order
 
   const startIndex = (page - 1) * limit
   const endIndex = page * limit
 
-  const resultPhotos = dbmock.photos.slice(startIndex, endIndex)
+  if(roleId === roleAdmin) {
+    const total = dbmock.photos.length
+    res.set("X-Total-Count", total)
+    res.json(dbmock.photos.slice(startIndex, endIndex))
+  } else {
+    dbmock.albums.forEach(album => {
+      if(album.userId.toString() === req.query.Id){
+        resultAlbums.push(album);
+      }
+    });
+    resultAlbums.forEach(album => {
+      dbmock.photos.forEach(photo => {
+        if(album.id === photo.albumId)
+          resultPhotos.push(photo);
+      })
+    });
+  }
   
-  const total = dbmock.photos.length
+  const total = resultPhotos.length
   res.set("X-Total-Count", total)
-  res.json(resultPhotos)
+  res.json(resultPhotos.slice(startIndex, endIndex))
 })
 
 //HTTP METHODS OF TODOS
@@ -167,7 +207,26 @@ app.get('/todos', (req, res) => {
   
   const total = resultTodos.length
   res.set("X-Total-Count", total)
-  res.json(resultTodos)
+  res.json(resultTodos.slice(startIndex, endIndex))
+})
+
+
+app.get('/mostCommentedPosts', (req, res) => {
+  let resultSet = []
+  let qtyComments = 0
+
+  dbmock.posts.forEach(post => {
+    dbmock.comments.forEach(comment => {
+      if(post.id === comment.postId){
+        qtyComments = qtyComments + 1
+      }
+    });
+    post.qtyComments = qtyComments
+    resultSet.push(post)
+    qtyComments = 0;
+  });
+  resultSet.sort((a, b) => b.qtyComments - a.qtyComments)
+  res.json(resultSet.slice(0, 10))
 })
 
 app.listen(3001)
