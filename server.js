@@ -2,6 +2,7 @@ const bcryptjs = require('bcryptjs')
 const express = require('express')
 const app = express()
 const dbmock = require('./db.json')
+const roleAdmin = "1";
 
 app.use(express.json())
 
@@ -14,7 +15,6 @@ app.use(function(req, res, next) {
 })
 
 app.post('/users/login', async (req, res) => {
-  console.log(req.body)
   const user = dbmock.users.find(user => user.username === req.body.username)
   if (user == null) {
     return res.status(400).send()
@@ -47,17 +47,30 @@ app.get('/users', (req, res) => {
 })
 
 app.get('/posts', (req, res) => {
+  let resultPosts = []
   const page = req.query.page
   const limit = req.query.perPage
+  const roleId = req.query.roleId
+  const userId = req.query.Id
   const filter = req.query.filter
   const order = req.query.order
 
   const startIndex = (page - 1) * limit
   const endIndex = page * limit
 
-  const resultPosts = dbmock.posts.slice(startIndex, endIndex)
-  
-  const total = dbmock.posts.length
+  if(roleId === roleAdmin) {
+    const total = dbmock.posts.length
+    res.set("X-Total-Count", total)
+    res.json(dbmock.posts.slice(startIndex, endIndex))
+  } else {
+    dbmock.posts.forEach(post => {
+      if(post.userId.toString() === req.query.Id){
+        resultPosts.push(post);
+      }
+    });
+  }
+
+  const total = resultPosts.length
   res.set("X-Total-Count", total)
   res.json(resultPosts)
 })
@@ -81,17 +94,30 @@ app.get('/comments', (req, res) => {
 
 //HTTP METHODS OF ALBUMS
 app.get('/albums', (req, res) => {
+  let resultAlbums = []
   const page = req.query.page
   const limit = req.query.perPage
+  const roleId = req.query.roleId
+  const userId = req.query.Id
   const filter = req.query.filter
   const order = req.query.order
 
   const startIndex = (page - 1) * limit
   const endIndex = page * limit
 
-  const resultAlbums = dbmock.albums.slice(startIndex, endIndex)
+  if(roleId === roleAdmin) {
+    const total = dbmock.albums.length
+    res.set("X-Total-Count", total)
+    res.json(dbmock.albums.slice(startIndex, endIndex))
+  } else {
+    dbmock.albums.forEach(album => {
+      if(album.userId.toString() === req.query.Id){
+        resultAlbums.push(album);
+      }
+    });
+  }
   
-  const total = dbmock.albums.length
+  const total = resultAlbums.length
   res.set("X-Total-Count", total)
   res.json(resultAlbums)
 })
@@ -115,17 +141,31 @@ app.get('/photos', (req, res) => {
 
 //HTTP METHODS OF TODOS
 app.get('/todos', (req, res) => {
+  let resultTodos = []
   const page = req.query.page
   const limit = req.query.perPage
+  const roleId = req.query.roleId
+  const userId = req.query.Id
   const filter = req.query.filter
   const order = req.query.order
 
   const startIndex = (page - 1) * limit
   const endIndex = page * limit
 
-  const resultTodos = dbmock.todos.slice(startIndex, endIndex)
+  console.log(roleId, ' ', roleAdmin)
+  if (roleId === roleAdmin) {
+    const total = dbmock.todos.length
+    res.set("X-Total-Count", total)
+    res.json(dbmock.todos.slice(startIndex, endIndex))
+  } else {
+    dbmock.todos.forEach(todo => {
+      if(todo.userId.toString() === req.query.Id){
+        resultTodos.push(todo);
+      }
+    });
+  }
   
-  const total = dbmock.todos.length
+  const total = resultTodos.length
   res.set("X-Total-Count", total)
   res.json(resultTodos)
 })
