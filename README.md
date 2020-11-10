@@ -1,6 +1,6 @@
 # Api-Auth
 
-It is an api that will support the [insight-social-media](https://github.com/efefarias/insight-social-media) application in various ways, such as login, http methods and etc.
+It is an api that will support the [insight-social-media](https://github.com/efefarias/insight-social-media) application in various ways, such as login, http methods and etc. This api also has a mock db from the jsonplaceholder. All methods consume this db and not the original source, so we can make adjustments to the database to be able to deliver more versatile reports.
 
 ## Installation
 
